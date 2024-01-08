@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { ClientEntity } from 'src/modules/client/infra/Client.entity';
-import { WalletEntity } from 'src/modules/wallet/infra/entities/Wallet.entity';
+import { PermissionEntity } from 'src/modules/permissions/infra/permission.entity';
+import { WalletEntity } from 'src/modules/wallet/infra/Wallet.entity';
 
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
@@ -18,7 +19,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get<string>('DB_USERNAME'),
       password: this.configService.get<string>('DB_PASSWORD'),
       database: this.configService.get<string>('DB_NAME'),
-      entities: [ClientEntity, WalletEntity],
+      entities: [ClientEntity, WalletEntity, PermissionEntity],
       synchronize: true,
       autoLoadEntities: true,
     };

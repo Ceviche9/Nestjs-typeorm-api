@@ -16,7 +16,7 @@ export class WalletEntity {
   id: string;
   @Column({ name: 'address', length: 100, nullable: false })
   address: string;
-  @Column({ name: 'private_key', length: 100, nullable: false })
+  @Column({ name: 'private_key', length: 100, nullable: false, default: '' })
   privateKey: string;
 
   @OneToOne(() => ClientEntity)

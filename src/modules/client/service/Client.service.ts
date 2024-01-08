@@ -14,6 +14,10 @@ export class ClientService implements IClientRepository {
     private readonly clientRepository: Repository<ClientEntity>,
   ) {}
 
+  async updateClientPermission(data: ClientEntity): Promise<void> {
+    await this.clientRepository.save(data);
+  }
+
   async findById(id: string): Promise<ClientEntity> {
     return await this.clientRepository.findOneBy({
       id,

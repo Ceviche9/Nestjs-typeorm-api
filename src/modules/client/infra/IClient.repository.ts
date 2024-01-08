@@ -8,4 +8,5 @@ export interface IClientRepository {
   create(data: ClientEntity): Promise<void>;
   emailExists(email: string): Promise<boolean>;
   update(id: string, data: Partial<UpdateClientDTO>): Promise<void>;
+  updateClientPermission(data: ClientEntity): Promise<void>;
 }

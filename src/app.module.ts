@@ -4,12 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { PostgresConfigService } from './config/database/postgres.config.service';
 import { ClientModule } from './modules/client/client.module';
+import { PermissionModule } from './modules/permissions/permission.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 
 @Module({
   imports: [
     ClientModule,
     WalletModule,
+    PermissionModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

@@ -14,6 +14,10 @@ export class ClientsRepository implements IClientRepository {
     return this.clientsModel.find((client) => client.id === id);
   }
 
+  async updateClientPermission(data: ClientEntity): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   async create(data: ClientEntity): Promise<void> {
     this.clientsModel.push(data);
   }
