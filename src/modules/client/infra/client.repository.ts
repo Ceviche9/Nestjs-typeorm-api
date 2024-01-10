@@ -1,53 +1,39 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { UpdateClientDTO } from '../dtos/UpdateClient.dto';
 import { ClientEntity } from './Client.entity';
 import { IClientRepository } from './IClient.repository';
 
 @Injectable()
 export class ClientsRepository implements IClientRepository {
-  update(id: string, data: Partial<UpdateClientDTO>): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  private clientsModel: ClientEntity[] = [];
+  constructor(
+    @InjectRepository(ClientEntity)
+    private readonly clientEntity: Repository<ClientEntity>,
+  ) {}
 
   async findById(id: string): Promise<ClientEntity> {
-    return this.clientsModel.find((client) => client.id === id);
+    return await this.clientEntity.findOneBy({
+      id,
+    });
   }
-
-  async updateClientPermission(data: ClientEntity): Promise<void> {
-    throw new Error('Method not implemented.');
+  async getAll(): Promise<ClientEntity[]> {
+    return await this.clientEntity.find();
   }
 
   async create(data: ClientEntity): Promise<void> {
-    this.clientsModel.push(data);
+    await this.clientEntity.save(data);
   }
 
-  async getAll(): Promise<ClientEntity[]> {
-    return this.clientsModel;
-  }
-
-  async emailExists(email: string): Promise<boolean> {
-    const clientExists = this.clientsModel.find(
-      (client) => client.email === email,
-    );
-    return clientExists !== undefined;
-  }
-
-  // Ao utilizar o Partial, o typescript informa que todoas as propriedades são opcionais
-  async updateClient(
-    id: string,
-    data: Partial<ClientEntity>,
-  ): Promise<ClientEntity> {
-    const client = this.clientsModel.find((client) => client.id === id);
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'id') {
-        return;
-      }
-
-      client[key] = value;
+  async emailExists(email: string): Promise<ClientEntity> {
+    const client = await this.clientEntity.findOneBy({
+      email,
     });
 
     return client;
+  }
+
+  async update(id: string, data: Partial<UpdateClientDTO>): Promise<void> {
+    await this.clientEntity.update(id, data);
   }
 }

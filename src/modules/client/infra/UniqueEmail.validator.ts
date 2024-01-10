@@ -19,6 +19,7 @@ export class UniqueEmailValidator implements ValidatorConstraintInterface {
     validationArguments?: ValidationArguments,
   ): Promise<boolean> {
     const clientExists = await this.clientsRepository.emailExists(value);
+    console.log('Estou sendo usado');
     return !clientExists;
   }
 }

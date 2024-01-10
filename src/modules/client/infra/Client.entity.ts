@@ -1,11 +1,8 @@
-import { PermissionEntity } from 'src/modules/permissions/infra/permission.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,10 +15,6 @@ export class ClientEntity {
   name: string;
   @Column({ name: 'email', length: 30, nullable: false })
   email: string;
-
-  @ManyToMany(() => PermissionEntity)
-  @JoinTable({ name: 'client_permissions' })
-  permissions: PermissionEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;

@@ -1,43 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+import { CreateClientDTO } from '../dtos/CreateClient.dto';
 import { GetClientDTO } from '../dtos/GetClient.dto';
 import { UpdateClientDTO } from '../dtos/UpdateClient.dto';
 import { ClientEntity } from '../infra/Client.entity';
-import { IClientRepository } from '../infra/IClient.repository';
+import { ClientsRepository } from '../infra/client.repository';
 
 @Injectable()
 // Por ser uma POC, estou permitindo que o service tenha uma comunicação direta com a ORM.
-export class ClientService implements IClientRepository {
-  constructor(
-    @InjectRepository(ClientEntity)
-    private readonly clientRepository: Repository<ClientEntity>,
-  ) {}
-
-  async updateClientPermission(data: ClientEntity): Promise<void> {
-    await this.clientRepository.save(data);
-  }
+export class ClientService {
+  constructor(private readonly clientsRepository: ClientsRepository) {}
 
   async findById(id: string): Promise<ClientEntity> {
-    return await this.clientRepository.findOneBy({
-      id,
-    });
-  }
-
-  emailExists(email: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    return await this.clientsRepository.findById(id);
   }
 
   async update(id: string, data: Partial<UpdateClientDTO>): Promise<void> {
-    await this.clientRepository.update(id, data);
+    await this.clientsRepository.update(id, data);
   }
 
-  async create(data: ClientEntity) {
-    await this.clientRepository.save(data);
+  async create(data: CreateClientDTO): Promise<void> {
+    const clientEntity = new ClientEntity();
+    clientEntity.id = uuid();
+    clientEntity.name = data.name;
+    clientEntity.email = data.email;
+    await this.clientsRepository.create(clientEntity);
   }
 
   async getAll(): Promise<GetClientDTO[]> {
-    const clients = await this.clientRepository.find();
+    const clients = await this.clientsRepository.getAll();
     const clientsList = clients.map(
       (client) => new GetClientDTO(client.id, client.name),
     );

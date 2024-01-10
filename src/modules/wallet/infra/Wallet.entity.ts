@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CreateWalletDTO } from '../dtos/CreateWallet.dto';
 
 @Entity({ name: 'wallets' })
 export class WalletEntity {
@@ -29,4 +30,12 @@ export class WalletEntity {
   updatedAt: string;
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: string;
+
+  public createWallet(data: CreateWalletDTO) {
+    const walletEntity = new WalletEntity();
+    walletEntity.address = data.address;
+    walletEntity.privateKey = data.privateKey;
+    walletEntity.client.id = data.client_id;
+    return walletEntity;
+  }
 }

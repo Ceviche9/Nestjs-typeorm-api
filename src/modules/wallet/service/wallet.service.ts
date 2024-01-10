@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ClientService } from 'src/modules/client/service/Client.service';
 import { WalletEntity } from '../infra/Wallet.entity';
+import { WalletRepository } from '../infra/Wallet.repository';
 
 @Injectable()
 export class WalletService {
   constructor(
-    @InjectRepository(WalletEntity)
-    private readonly walletRepository: Repository<WalletEntity>,
+    private readonly walletRepository: WalletRepository,
+    private readonly clientService: ClientService,
   ) {}
 
   async create(data: WalletEntity) {
-    await this.walletRepository.save(data);
+    const client = await this.clientService.findById(data.client.id);
+    if (!client) throw new Error('Client not found');
+    await this.walletRepository.create(data);
   }
 }
