@@ -6,19 +6,19 @@ import {
   ValidatorConstraintInterface,
   registerDecorator,
 } from 'class-validator';
-import { ClientsRepository } from './client.repository';
+import { ClientService } from 'src/modules/client/service/Client.service';
 
 @Injectable()
 // Para que o class-validator espere a execução
 @ValidatorConstraint({ async: true })
 export class UniqueEmailValidator implements ValidatorConstraintInterface {
-  constructor(private clientsRepository: ClientsRepository) {}
+  constructor(private clientService: ClientService) {}
 
   async validate(
     value: any,
     validationArguments?: ValidationArguments,
   ): Promise<boolean> {
-    const clientExists = await this.clientsRepository.emailExists(value);
+    const clientExists = await this.clientService.emailExists(value);
     console.log('Estou sendo usado');
     return !clientExists;
   }

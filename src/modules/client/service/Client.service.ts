@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { CreateClientDTO } from '../dtos/CreateClient.dto';
 import { GetClientDTO } from '../dtos/GetClient.dto';
 import { UpdateClientDTO } from '../dtos/UpdateClient.dto';
 import { ClientEntity } from '../infra/Client.entity';
-import { ClientsRepository } from '../infra/client.repository';
+import { IClientRepository } from '../infra/IClient.repository';
 
 @Injectable()
 // Por ser uma POC, estou permitindo que o service tenha uma comunicação direta com a ORM.
-export class ClientService {
-  constructor(private readonly clientsRepository: ClientsRepository) {}
+export class ClientService implements IClientRepository {
+  constructor(
+    @InjectRepository(ClientEntity)
+    private readonly clientsRepository: Repository<ClientEntity>,
+  ) {}
+
+  async emailExists(email: string): Promise<ClientEntity> {
+    const client = await this.clientsRepository.findOneBy({
+      email,
+    });
+
+    return client;
+  }
 
   async findById(id: string): Promise<ClientEntity> {
-    return await this.clientsRepository.findById(id);
+    return await this.clientsRepository.findOneBy({
+      id,
+    });
   }
 
   async update(id: string, data: Partial<UpdateClientDTO>): Promise<void> {
@@ -28,7 +43,7 @@ export class ClientService {
   }
 
   async getAll(): Promise<GetClientDTO[]> {
-    const clients = await this.clientsRepository.getAll();
+    const clients = await this.clientsRepository.find();
     const clientsList = clients.map(
       (client) => new GetClientDTO(client.id, client.name),
     );

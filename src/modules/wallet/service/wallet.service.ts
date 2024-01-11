@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/modules/client/service/Client.service';
+import { Repository } from 'typeorm';
+import { IWalletRepository } from '../infra/IWallet.repository';
 import { WalletEntity } from '../infra/Wallet.entity';
-import { WalletRepository } from '../infra/Wallet.repository';
 
 @Injectable()
-export class WalletService {
+export class WalletService implements IWalletRepository {
   constructor(
-    private readonly walletRepository: WalletRepository,
+    @InjectRepository(WalletEntity)
+    private readonly walletRepository: Repository<WalletEntity>,
     private readonly clientService: ClientService,
   ) {}
 
